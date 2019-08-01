@@ -18,7 +18,23 @@ npm install
 node index.js
 ```
 
+As an alternative, the following is a decent command to run it on Linux inside of a screen (adjusting paths as needed).
+
+```
+screen -S DiscordRulesBot -m /usr/bin/nodejs /u01/Discord-Rules-Bot/index.js
+```
+
+Note that, if you're using Linux, you may have to follow the "Installing Node.js from the NodeSource repository" instructions here: https://linuxize.com/post/how-to-install-node-js-on-ubuntu-18.04/
+
 And if all went well, the bot should be up and running!
+
+# Permissions
+Because this bot will delete messages to keep the rules channel clean, and automatically apply roles, you should make sure that you add it to a role with at lesat the following permissions:
+
+* Manage Roles
+* Manage Messages
+
+Also, make sure that the role is higher than the "Accepted Rules" role that you will be having it manage.
 
 # Development/Debugging
 Debugging is surprisingly easy, but I want to record it here just in case it's needed in the future.
@@ -29,4 +45,3 @@ Debugging is surprisingly easy, but I want to record it here just in case it's n
 4. Make sure "Debug > Node: Auto Attach" is set to "on"
 5. Run the command "node --inspect index.js"
 6. Set breakpoints
-
