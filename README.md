@@ -19,3 +19,14 @@ node index.js
 ```
 
 And if all went well, the bot should be up and running!
+
+# Development/Debugging
+Debugging is surprisingly easy, but I want to record it here just in case it's needed in the future.
+
+1. Open the project in Visual Studio Code
+2. Go to File -> Preferences -> Settings
+3. Search for "node debug"
+4. Make sure "Debug > Node: Auto Attach" is set to "on"
+5. Run the command "node --inspect index.js"
+6. Set breakpoints
+
