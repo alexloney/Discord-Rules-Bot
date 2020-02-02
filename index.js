@@ -2,10 +2,12 @@ const Discord = require('discord.js');
 let token = require('./token.json');
 var botconfig = require('./botconfig.json');
 
-let enableBot = true;
-
 // Create an instance of a Discord client
 const client = new Discord.Client();
+
+// Store per-guild settings, this will let us enable/disable on separate servers if this
+// bot happens to be managing multiple servers.
+let guildSettings = {};
 
 // The ready event is vital, it means that only _after_ this will your bot
 // start reacting to information received form Discord
@@ -25,9 +27,19 @@ client.on('message', message => {
     // Only allow usage on the specific provided channel
     if (message.channel.name !== botconfig.channel) return;
 
+    let guildId = message.guild.id;
+    let channelId = message.channel.id;
+
+    if (!guildSettings.hasOwnProperty(guildId))
+    {
+        guildSettings[guildId] = {
+            'enabled': true
+        };
+    }
+
     // Check the message sent to see if it's the command we're looking for
-    if (message.content === `${botconfig.prefix}enable` ||
-        message.content === `${botconfig.prefix}disable`)
+    if (message.content === `${botconfig.prefix}${botconfig.enable_command}` ||
+        message.content === `${botconfig.prefix}${botconfig.disable_command}`)
     {
         // Search through the member list for this specific user to check permissions
         let member = message.guild.members
@@ -45,9 +57,9 @@ client.on('message', message => {
         if (member.hasPermission('ADMINISTRATOR') ||
             member.roles.find(role => role.name === 'Tech Support'))
         {
-            enableBot = true;
-            if (message.content.includes('enable')) enableBot = true;
-            else if (message.content.includes('disable')) enableBot = false;
+            guildSettings[guildId].enabled = true;
+            if (message.content.includes(`${botconfig.enable_command}`)) guildSettings[guildId].enabled = true;
+            else if (message.content.includes(`${botconfig.disable_command}`)) guildSettings[guildId].enabled = false;
         }
         else
         {
@@ -66,7 +78,7 @@ client.on('message', message => {
     else if (message.content === `${botconfig.prefix}${botconfig.acceptcommand}`)
     {
         // If the bot is not enabled, simply return and don't do anything
-        if (!enableBot) return;
+        if (!guildSettings[guildId].enabled) return;
 
         // Locate the role from the server that we'll be assigning (we need the ID)
         let acceptedRole = message.guild.roles.find(role => role.name === botconfig.role);
@@ -90,23 +102,31 @@ client.on('message', message => {
     else
     {
         // If the bot is not enabled, simply return and don't do anything
-        if (!enableBot) return;
+        if (!guildSettings[guildId].enabled) return;
 
         // Remove the users message and send them a private message to inform
         // them that they should not send anything else to this channel.
-        message
-            .delete()
-            .catch(console.warn)
-            .then(() => 
-                message.author
-                    .send(
-                        'Please don\'t send unrelated messages in #' + botconfig.channel
-                    )
-                    .catch(console.warn)
-                )
+        if (botconfig.send_unrelated_message)
+        {
+            message
+                .delete()
+                .catch(console.warn)
+                .then(() => 
+                    message.author
+                        .send(
+                            'Please don\'t send unrelated messages in #' + botconfig.channel
+                        )
+                        .catch(console.warn)
+                    );
+        }
+        else
+        {
+            message.delete();
+        }
     }
 
 });
 
+// Invite URL: https://discordapp.com/oauth2/authorize?&client_id=606314514375245836&scope=bot&permissions=0
 // Log our bot in using the token from https://discordapp.com/developers/applications/me
 client.login(token.token);

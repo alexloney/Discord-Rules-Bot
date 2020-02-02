@@ -2,5 +2,8 @@
     "prefix": "!",
     "acceptcommand": "accept",
     "channel": "rules",
-    "role": "Accepted Rules"
+    "role": "Accepted Rules",
+    "send_unrelated_message": false,
+    "enable_command": "enable",
+    "disable_command": "disable"
 }
