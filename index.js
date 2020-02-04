@@ -19,7 +19,7 @@ client.on('ready', () => {
 client.on('message', message => {
 
     // Do not respond to messages from bots (prevent a possible infinite loop)
-    if (message.author.bot) return;
+    // if (message.author.bot) return;
 
     // Do not respond to private messages
     if (message.channel.type === 'dm') return;
