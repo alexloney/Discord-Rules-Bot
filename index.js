@@ -37,43 +37,19 @@ client.on('message', message => {
         };
     }
 
-    // Check the message sent to see if it's the command we're looking for
-    if (message.content === `${botconfig.prefix}${botconfig.enable_command}` ||
-        message.content === `${botconfig.prefix}${botconfig.disable_command}`)
+    // Search through the member list for this specific user to check permissions
+    let member = message.guild.members
+        .get(message.author.id);
+    if (!member)
     {
-        // Search through the member list for this specific user to check permissions
-        let member = message.guild.members
-                        .get(message.author.id);
-        if (!member)
-        {
-            console.log('Failed when attempting to look up user');
-            return;
-        }
+        console.log('Failed when attempting to look up user');
+        return;
+    }
 
-        // If the user is an admin or tech support, let them enable/disable the bot.
-        // otherwise prevent it with a message informing them that they do not have
-        // permission to do this. A complete list of permissions may be found here:
-        // https://discord.js.org/#/docs/main/stable/class/Permissions
-        if (member.hasPermission('ADMINISTRATOR') ||
-            member.roles.find(role => role.name === 'Tech Support'))
-        {
-            guildSettings[guildId].enabled = true;
-            if (message.content.includes(`${botconfig.enable_command}`)) guildSettings[guildId].enabled = true;
-            else if (message.content.includes(`${botconfig.disable_command}`)) guildSettings[guildId].enabled = false;
-        }
-        else
-        {
-            message.author
-                    .send(
-                        'You do not have permission to execute that command.'
-                    )
-                    .catch(console.warn)
-        }
-
-        // In either case, delete the message that started this.
-        message
-            .delete()
-            .catch(console.warn);
+    if (member.hasPermission('ADMINISTRATOR'))
+    {
+        // In this case, we do nothing. Let admins post as they wish without removing or attempting to grant
+        // them permissions.
     }
     else if (message.content === `${botconfig.prefix}${botconfig.acceptcommand}`)
     {
