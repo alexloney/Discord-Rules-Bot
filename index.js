@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-let token = require('./token.json');
 var botconfig = require('./botconfig.json');
 
 // Create an instance of a Discord client
@@ -105,4 +104,4 @@ client.on('message', message => {
 
 // Invite URL: https://discordapp.com/oauth2/authorize?&client_id=606314514375245836&scope=bot&permissions=0
 // Log our bot in using the token from https://discordapp.com/developers/applications/me
-client.login(token.token);
+client.login(process.env.TOKEN);
